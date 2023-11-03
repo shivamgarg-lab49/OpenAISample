@@ -1,14 +1,29 @@
 import "dotenv/config";
-import OpenAI from "openai";
+
+import { OpenAI } from "langchain/llms/openai";
+import { LLMChain } from "langchain/chains";
+import { PromptTemplate } from "langchain/prompts";
 
 async function main() {
-  const openAI = new OpenAI();
-  const completion = await openAI.chat.completions.create({
-    messages: [{ role: "system", content: "You are a helpful assistant." }],
-    model: "gpt-3.5-turbo",
+  const llm = new OpenAI();
+
+  const codePrompt = new PromptTemplate({
+    inputVariables: [`language`, `task`],
+    template: `Write a very short {language} function that will {task}`,
   });
 
-  console.log(completion.choices[0]);
+  const codeChain = new LLMChain({
+    llm: llm,
+    prompt: codePrompt,
+    outputKey: "code",
+  });
+
+  const result = await codeChain.call({
+    language: "java",
+    task: "return first 10 numbers",
+  });
+
+  console.log(result.code);
 }
 
 main();
