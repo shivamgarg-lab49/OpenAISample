@@ -1,8 +1,8 @@
 import "dotenv/config";
 
 import { OpenAI } from "langchain/llms/openai";
-import { LLMChain } from "langchain/chains";
 import { PromptTemplate } from "langchain/prompts";
+import { LLMChain, SequentialChain } from "langchain/chains";
 
 async function main() {
   const llm = new OpenAI();
@@ -12,18 +12,33 @@ async function main() {
     template: `Write a very short {language} function that will {task}`,
   });
 
+  const testCodePrompt = new PromptTemplate({
+    inputVariables: [`language`, `code`],
+    template: "Write a unit test for the following {language} code:\n{code}",
+  });
+
   const codeChain = new LLMChain({
     llm: llm,
     prompt: codePrompt,
     outputKey: "code",
   });
 
-  const result = await codeChain.call({
-    language: "java",
-    task: "return first 10 numbers",
+  const testCodeChain = new LLMChain({
+    llm: llm,
+    prompt: testCodePrompt,
+    outputKey: "test",
   });
 
-  console.log(result.code);
+  const result = await new SequentialChain({
+    chains: [codeChain, testCodeChain],
+    inputVariables: ["task", "language"],
+    returnAll: true,
+  }).call({
+    language: "java",
+    task: "print hello",
+  });
+
+  console.log(result.code, result.test, result);
 }
 
 main();
