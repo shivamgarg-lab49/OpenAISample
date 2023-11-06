@@ -38,7 +38,11 @@ async function main() {
     task: "print hello",
   });
 
-  console.log(result.code, result.test, result);
+  console.log(">>>>>>>> CODE");
+  console.log(result.code);
+
+  console.log("\n>>>>>>>> TEST");
+  console.log(result.test);
 }
 
 main();
