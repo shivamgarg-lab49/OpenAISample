@@ -45,4 +45,4 @@ async function main() {
   console.log(result.test);
 }
 
-main();
+main().then(() => process.exit(0));
