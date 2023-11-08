@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { CONSTANTS } from "./constant.js";
+import { CONSTANTS } from "../constant.js";
 
 import { Chroma } from "langchain/vectorstores/chroma";
 import { ChatOpenAI } from "langchain/chat_models/openai";

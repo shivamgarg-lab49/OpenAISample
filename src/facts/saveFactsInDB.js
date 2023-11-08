@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { CONSTANTS } from "./constant.js";
+import { CONSTANTS } from "../constant.js";
 
 import { Chroma } from "langchain/vectorstores/chroma";
 import { TextLoader } from "langchain/document_loaders/fs/text";
@@ -13,7 +13,7 @@ async function main() {
     chunkSize: 200,
     chunkOverlap: 0,
   });
-  const textLoader = new TextLoader("src/source/facts.txt");
+  const textLoader = new TextLoader("src/facts/facts.txt");
   const docs = await textLoader.loadAndSplit(textSplitter);
   await Chroma.fromDocuments(docs, new OpenAIEmbeddings(), {
     collectionName: CONSTANTS.COLLECTION_NAME,
