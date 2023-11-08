@@ -1,11 +1,11 @@
 import "dotenv/config";
 
+import { CONSTANTS } from "./constant.js";
+
 import { Chroma } from "langchain/vectorstores/chroma";
 import { TextLoader } from "langchain/document_loaders/fs/text";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { CharacterTextSplitter } from "langchain/text_splitter";
-
-export const COLLECTION_NAME = "collection-100";
 
 async function main() {
   const textSplitter = new CharacterTextSplitter({
@@ -16,7 +16,7 @@ async function main() {
   const textLoader = new TextLoader("src/source/facts.txt");
   const docs = await textLoader.loadAndSplit(textSplitter);
   await Chroma.fromDocuments(docs, new OpenAIEmbeddings(), {
-    collectionName: COLLECTION_NAME,
+    collectionName: CONSTANTS.COLLECTION_NAME,
   });
 }
 

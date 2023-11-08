@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { COLLECTION_NAME } from "./saveFactsInDB.js";
+import { CONSTANTS } from "./constant.js";
 
 import { Chroma } from "langchain/vectorstores/chroma";
 import { ChatOpenAI } from "langchain/chat_models/openai";
@@ -10,16 +10,22 @@ import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 async function main() {
   const chatOpenAIModel = new ChatOpenAI();
   const chroma = await Chroma.fromExistingCollection(new OpenAIEmbeddings(), {
-    collectionName: COLLECTION_NAME,
+    collectionName: CONSTANTS.COLLECTION_NAME,
   });
   const retrievalQAChain = RetrievalQAChain.fromLLM(
     chatOpenAIModel,
-    chroma.asRetriever()
+    chroma.asRetriever(),
+    {
+      inputKey: "question",
+      returnSourceDocuments: false,
+    }
   );
   const results = await retrievalQAChain.call({
-    query: "What is an interesting fact about English language ?",
+    question: "What is an interesting fact about English language ?",
   });
-  console.log({ results });
+  console.log(results);
 }
 
-main().then(() => process.exit(0));
+main()
+  .then(() => process.exit(0))
+  .catch((e) => console.log(e));
